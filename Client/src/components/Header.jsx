@@ -24,7 +24,7 @@ function Header() {
             <FaMoon/>
             </Button>
             <Link to='/sign-in'>
-            <Button className='w-15 h-10 hidden sm: inline bg-gradient-to-r from-red-500 via black to-black text-white' color='red' pill>Sign In</Button>
+            <Button className='w-15 h-10 hidden sm: inline bg-gradient-to-r from-red-500 via black to-black text-white' color='red' pill outline>Sign In</Button>
             </Link>
             <Navbar.Toggle/>
             </div>
