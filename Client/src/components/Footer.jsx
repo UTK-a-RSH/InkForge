@@ -55,7 +55,7 @@ function FooterComp() {
             by="InkForge"
             year={new Date().getFullYear()}
           />
-          <div className="flex gap-6 sm:mt-0 mt-4 sm:justify-center">
+          <div className='flex gap-8 sm:mt-0 mt-4 sm:justify-center'>
            
             <Footer.Icon href='https://replit.com/@UtkarshTripath9' icon={SiReplit}/>
             <Footer.Icon href='https://github.com/UTK-a-RSH' icon={BsGithub}/>
