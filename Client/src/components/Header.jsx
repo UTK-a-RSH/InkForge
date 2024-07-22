@@ -53,9 +53,8 @@ function Header() {
                 Profile
                </DropdownItem>
                </Link>
-               <DropdownDivider>
-                <DropdownItem>Sign Out</DropdownItem>
-               </DropdownDivider>
+               <DropdownDivider/>
+               <DropdownItem>Sign Out</DropdownItem>
               </Dropdown>
             ) : (
               <Link to='/sign-in'>
