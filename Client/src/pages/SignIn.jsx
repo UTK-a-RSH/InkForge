@@ -67,7 +67,7 @@ const handleSubmit = async (e) => {
             <Label value='Your password'/>
             <TextInput type='password' placeholder='**********' id='password' onChange={handleChange}/>
           </div>
-          <Button className='text-white bg-gradient-to-r from-red-500 to-black hover:bg-gradient-to-l focus:ring-4 focus:outline-none' type='submit' disabled={loading}> {loading ? <><Spinner size='sm'/> <span className='pl-3'>Loading...</span></> : 'Sign In'} </Button>
+          <Button className='text-white bg-gradient-to-r from-red-500 to-black hover:bg-gradient-to-l focus:ring-4 focus:outline-none' type='submit' outline disabled={loading}> {loading ? <><Spinner size='sm'/> <span className='pl-3'>Loading...</span></> : 'Sign In'} </Button>
           <OAuth/>
         </form>
         <div className='flex gap-2 text-sm mt-5'>
