@@ -86,7 +86,7 @@ function DashProfile() {
 
             </div>
             {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
-           <TextInput type='username' id='username' placeholder='username' defaultValue={currentUser.name}/>
+           <TextInput type='username' id='username' placeholder='username' defaultValue={currentUser.username}/>
            <TextInput  type='email' id='email' placeholder='email' defaultValue={currentUser.email}/>
            <TextInput type='password' id='password' placeholder='password' defaultValue='*******'/>
            <Button type='submit' className='text-white bg-gradient-to-r from-blue-700 to-black hover:bg-gradient-to-l'  outline> Update </Button>
