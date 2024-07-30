@@ -5,6 +5,8 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import { app } from '../firebase'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { updateStart, updateSuccess, updateFailure } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 function DashProfile() {
     const {currentUser} = useSelector(state => state.user);
@@ -12,16 +14,29 @@ function DashProfile() {
     const [imageFileUrl, setImageFileUrl] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
     const [imageUploadError, setImageUploadError] = useState(null);
+    const [formData, setFormData] = useState({});
+    const [imageFileUploading, setImageFileUploading] = useState(false);
+    const [userUpdated, setUserUpdated] = useState(null);
+    const [updateError, setUpdateError] = useState(null);
+    const dispatch = useDispatch();
     const filePickerRef = useRef();
 
 
     const handleImageFile = (e) => {
         const file = e.target.files[0];
-        if(file){
-        setImageFile(file);
-        setImageFileUrl(URL.createObjectURL(file));
+        const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+    
+        if (file) {
+            if (file.size > MAX_FILE_SIZE) {
+                // If the file size exceeds the limit, set an error message
+                setImageUploadError('Please upload an image of size less than 2MB');
+            } else {
+                // If the file size is within the limit, proceed with setting the file and URL
+                setImageFile(file);
+                setImageFileUrl(URL.createObjectURL(file));
+                setImageUploadError(null); // Clear any previous error messages
+            }
         }
-        
     };
 
     useEffect(() => {
@@ -32,6 +47,7 @@ function DashProfile() {
 
 
     const uploadImage = async () => {
+        setImageFileUploading(true);
         setImageUploadError(null);
         const storage = getStorage(app);
         const fileName = new Date().getTime() + imageFile.name;
@@ -44,25 +60,74 @@ function DashProfile() {
                 setImageUpload(progress.toFixed(0));
             }, 
             (error) => {
+            
                 setImageUploadError('Please upload an image of size less than 2MB ');
                 setImageUpload(null);
                 setImageFile(null);
-                setImageFileUrl(null)
+                setImageFileUrl(null);
+                setImageFileUploading(false);
 
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then(({downloadURL}) => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setImageFileUrl(downloadURL);
+                    setFormData({...formData, profilePicture : downloadURL});
+                    setImageFileUploading(false);
                 });
             
             }
         )
 
     };
+
+    const handleChange = (e) => {
+        setFormData({...formData, [e.target.id] : e.target.value });
+    };
+
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        setUpdateError(null);
+        setUserUpdated(null);
+        if(Object.keys(formData).length === 0){
+            setUpdateError('No changes were made');
+            return;
+        }
+        if(imageFileUploading){
+            setUpdateError("Please wait for image to upload");
+            return;
+        }
+        try {
+            dispatch(updateStart());
+            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+                method : 'PUT',
+                headers : {
+                    'Content-Type' : 'application/json',
+                },
+                body : JSON.stringify(formData),
+            }) ;          
+            const data = await res.json();
+            if(!res.ok){
+                dispatch(updateFailure(data.message));
+                setUpdateError(data.message);
+            }
+            else{
+                dispatch(updateSuccess(data));
+                setUserUpdated("User profile is updated successfully");
+            }
+
+        } catch (error) {
+            dispatch(updateFailure(error.message));
+            setUpdateError(error.message);
+        }
+    };
+
+
+
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
         <h1 className='my-7 text-center front semi-bold text-3xl text-gray-800'>Profile</h1>
-        <form className='flex flex-col gap-4'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <input type='file' accept='image/*' onChange={handleImageFile} ref={filePickerRef} hidden/>
             <div className='relative w-32 h-32 self-center cursor-pointer shadow-md overflow  rounded-full' onClick={() => filePickerRef.current.click()}>
                 {imageUpload && (
@@ -78,6 +143,7 @@ function DashProfile() {
                         path: {
                             stroke: `rgb(62, 104, 96 ${imageUpload/100})`,
                         },
+                        
                      }}
                      />
                 )}
@@ -86,15 +152,26 @@ function DashProfile() {
 
             </div>
             {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
-           <TextInput type='username' id='username' placeholder='username' defaultValue={currentUser.username}/>
-           <TextInput  type='email' id='email' placeholder='email' defaultValue={currentUser.email}/>
-           <TextInput type='password' id='password' placeholder='password' defaultValue='*******'/>
+           <TextInput type='username' id='username' placeholder='username' defaultValue={currentUser.username}  onChange={handleChange}/>
+           <TextInput  type='email' id='email' placeholder='email' defaultValue={currentUser.email}  onChange={handleChange}/>
+           <TextInput type='password' id='password' placeholder='password' defaultValue='*******'  onChange={handleChange}/>
            <Button type='submit' className='text-white bg-gradient-to-r from-blue-700 to-black hover:bg-gradient-to-l'  outline> Update </Button>
         </form>
         <div className='text-red-500 flex justify-between mt-5'>
             <span className='cursor-pointer'>Delete Account </span>
             <span className='cursor-pointer'>Sign Out </span>
         </div>
+        {userUpdated && (
+            <Alert color='success' className='mt-5'>
+                {userUpdated}
+            </Alert>
+        )}
+
+{updateError && (
+            <Alert color='failure' className='mt-5'>
+                {updateError}
+            </Alert>
+        )}
     </div>
   )
 }

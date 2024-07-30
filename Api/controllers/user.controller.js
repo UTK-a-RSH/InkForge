@@ -13,11 +13,11 @@ export const updateUser = async (req, res, next) => {
         return next(errorHandler(403, 'Updation is not allowed'));
     }
     if(req.body.password){
-        if(req.body.passowrd.length < 6){
+        if(req.body.password.length < 6){
             return next(errorHandler(400, 'Password must be of atleast 6 characters'));
         }
 
-        req.body.password = bcryptjs.hashSync(req.body.passowrd, 10);
+        req.body.password = bcryptjs.hashSync(req.body.password, 10);
 
     }
 
@@ -38,12 +38,14 @@ export const updateUser = async (req, res, next) => {
             return next(errorHandler(400, 'Username can only contain letters and numbers'));
         }
 
+    }
+
         try {
             const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
                 $set : {
                     username : req.body.username,
                     email : req.body.email,
-                    passowrd: req.body.password,
+                    password: req.body.password,
                     profilePicture : req.body.profilePicture,
                 },
             },
@@ -56,6 +58,6 @@ export const updateUser = async (req, res, next) => {
         } catch (error) {
             return next(error);
         }
-    }
+    
 
 };
