@@ -6,7 +6,6 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import { app } from '../firebase'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import e from 'express';
 import {useNavigate} from 'react-router-dom'
 
 function CreatePost() {
@@ -60,14 +59,16 @@ function CreatePost() {
 
 
     const handleSubmit = async(e) => {
+      
       e.preventDefault();
       try {
         const res = await fetch('/api/post/create', {
           method : 'POST',
           headers : {
             'Content-Type' : 'application/json',
+            
           },
-          body: json.stringify(formData),
+          body: JSON.stringify(formData),
         });
         const data = await res.json();
         if(!res.ok){
@@ -80,6 +81,7 @@ function CreatePost() {
         }
         
       } catch (error) {
+       
         setPublishError('Something went wrong');
       }
     }
@@ -139,13 +141,6 @@ function CreatePost() {
         {publishError && <Alert className='mt-5' color='failure'>{publishError}</Alert>}
 
         </form>
-
-
-
-
-
-
-
     </div>
   )
 }
