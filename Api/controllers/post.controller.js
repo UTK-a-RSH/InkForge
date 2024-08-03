@@ -46,7 +46,9 @@ try {
 
     const totalPosts = await Post.countDocuments();
 
-    const now = new Date(
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
         now.getFullYear(),
         now.getMonth()-1,
         now.getDate()
