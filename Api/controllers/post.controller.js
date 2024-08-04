@@ -51,7 +51,7 @@ try {
     const oneMonthAgo = new Date(
         now.getFullYear(),
         now.getMonth()-1,
-        now.getDate()
+        now.getDate(),
     );
 
     const lastMonthPosts = await Post.countDocuments({
