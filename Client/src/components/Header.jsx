@@ -32,7 +32,7 @@ function Header() {
 
   return (
     <Navbar className='border-b-2'><Link to="/" className='self-center whitespace-nowrap text-sm:text-x1 font-semibold dark:text-white'>
-        <span className='px-2 py-2 bg-gradient-to-r from-red-700 via-black to-black rounded-xl text-white'>INK</span>Forge
+        <span className=' w-full px-2 py-2 bg-gradient-to-r from-red-700 via-black to-black rounded-xl text-white'>INK</span>Forge
     </Link><form>
         <TextInput
         type='text'
@@ -44,9 +44,9 @@ function Header() {
           <AiOutlineSearch/>
           </Button>
           
-          <div className='flex gap-2 md:order-2'>
+          <div className='flex gap-20 md:order-2'>
             <Button 
-            className='w-12 h-10 hidden sm:inline'
+            className='w-12 h-10 hidden sm:inline gap-10'
             color = 'gray'
             pill
             onClick = {() => dispatch(toggleTheme())}>
