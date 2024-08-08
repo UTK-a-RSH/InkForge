@@ -91,7 +91,7 @@ function DashPosts() {
                                 {new Date(post.updatedAt).toLocaleDateString()}
                             </TableCell>
                             <TableCell>
-                                <Link t={`/post/${post.slug}`}>
+                                <Link to={`/post/${post.slug}`}>
                                 <img 
                                 src={post.image}
                                 alt={post.title}
@@ -99,7 +99,9 @@ function DashPosts() {
                                 </Link>
                             </TableCell>
                             <TableCell>
-                                <Link t={`/post/${post.slug}`} className='font-medium text-gray-900 dark:text-white'>{post.title}</Link>
+                                <Link to={`/post/${post.slug}`} className='font-medium text-gray-900 dark:text-white'>
+                                    {post.title}
+                                </Link>
                             </TableCell>
                             <TableCell>
                                 {post.category}
