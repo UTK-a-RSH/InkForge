@@ -1,12 +1,14 @@
 import { Alert, Button, Textarea } from 'flowbite-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Comment from './Comment';
 
 function CommentSection({postId}) {
     const {currentUser} = useSelector(state => state.user);
     const [comment, addComment] = useState('');
-    const [commentError, setCommentError] = useState('')
+    const [commentError, setCommentError] = useState('');
+    const [comments, setComments] = useState([]);
 
     const handleComment = async(e) => {
         e.preventDefault();
@@ -29,11 +31,30 @@ function CommentSection({postId}) {
             if(res.ok){
                 addComment('');
                 setCommentError(null);
+                setCommentError([data, ...comments]);
             }
         } catch (error) {
             setCommentError(error.message);
         }
     };
+
+
+    useEffect(() => {
+        const getComment = async() => {
+            try {
+                const res = await fetch(`/api/comment/getComments/${postId}`);
+                if(res.ok){
+                    const data = await res.json();
+                    setComments(data);
+
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+        getComment();
+    }, [postId])
+
   return (
     <div className='max-w-full mx-auto w-full p-3'>
 {
@@ -71,6 +92,32 @@ function CommentSection({postId}) {
            {commentError && 
            ( <Alert color='failure' className='mt-5'>{commentError}</Alert>)}
         </form>
+    )
+}
+
+{
+    comments.length === 0 ? (
+        <p className='text-sm my-5 dark:white'>Try to add the comment please.</p>
+    ) : (
+       <>
+        <div className="text-sm my-5 flex items-center gap-1">
+            <p className='text-black dark: text-white'>
+                Comments
+                
+            </p>
+            <div className='border border-gray-400 py-1 px-3 rounded-sm dark: bg-white'>
+                    <p>
+                        {comments.length}
+                    </p>
+                </div>
+        </div>
+        {
+            comments.map((comment) => (
+                <Comment key={comment._id} comment = {comment}/>
+            ))
+        }
+        
+        </>
     )
 }
     </div>
