@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import { IoMdThumbsUp } from "react-icons/io";
 import { useSelector } from 'react-redux';
+import { Button, Textarea } from 'flowbite-react';
 
-function Comment({comment, onLike}) {
+function Comment({comment, onLike, onEdit}) {
     const {currentUser} = useSelector(state => state.user);
+    const [edit, setEdit] = useState(false);
     const [user, setUser] = useState({});
+    const [editedcomment, setEditedComment] = useState(comment.content);
     useEffect(() => {
         const getUser = async() => {
             try {
@@ -23,6 +26,32 @@ function Comment({comment, onLike}) {
 
     }, [comment])
 
+    const handleEdit = async() => {
+        setEdit(true);
+        setEditedComment(comment.content);
+
+    };
+
+    const handleSave = async() => {
+        try {
+            const res = await fetch(`/api/comment/editComment/${comment._id}`, {
+                method : 'PUT',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({
+                    content : editedcomment
+                })
+            });
+            if(res.ok){
+                setEdit(false);
+                onEdit(comment, editedcomment);
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
   return (
     <div className='flex p-4 border-b dark:border-gray-600 text-sm'>
         <div className='flex-shrink-3'>
@@ -34,8 +63,25 @@ function Comment({comment, onLike}) {
                 <span className='text-gray-500 text-xs'>
                     {moment(comment.createdAt).fromNow()}
                 </span>
-            </div>
-            <p className='text-gray-500 pb-2'>{comment.content}</p>
+            </div>{
+                edit ? (
+                    <><Textarea className='mb-2'
+                    onChange={(e) => setEditedComment(e.target.value)}
+                    value={editedcomment}/>
+                    <div className='flex justify-end gap-3 text-xs'>
+                        <Button onClick={handleSave} type='button' className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg'>
+                            Save
+                        </Button>
+                        <Button type='button' className='text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-400/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg ' outline  onClick={() => setEdit(false)}>
+                            Cancel
+                        </Button>
+                    </div>   
+                    
+                    </>
+                    
+                ) : (
+                    <>
+                     <p className='text-gray-500 pb-2'>{comment.content}</p>
             <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
                 <button type='button' onClick={()=> onLike(comment._id)} className={`text-gray-400 hover:text-blue-500 ${currentUser && comment.likes.includes(currentUser._id) && '!text-blue-500'}`}>
                 <IoMdThumbsUp />
@@ -47,7 +93,18 @@ function Comment({comment, onLike}) {
                         )
                     }
                 </p>
+                {
+                  currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) && (
+                    <button type='button' className='text-gray-400 hover:text-blue-500' onClick={handleEdit}>
+                        Edit
+                    </button>
+                  )  
+                }
             </div>
+                    </>
+                )
+            }
+           
         </div>
     </div>
   )
