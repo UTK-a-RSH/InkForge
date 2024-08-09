@@ -1,7 +1,7 @@
 import { Alert, Button, Textarea } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Comment from './Comment';
 
 function CommentSection({postId}) {
@@ -9,6 +9,7 @@ function CommentSection({postId}) {
     const [comment, addComment] = useState('');
     const [commentError, setCommentError] = useState('');
     const [comments, setComments] = useState([]);
+    const  navigate = useNavigate();
 
     const handleComment = async(e) => {
         e.preventDefault();
@@ -31,7 +32,7 @@ function CommentSection({postId}) {
             if(res.ok){
                 addComment('');
                 setCommentError(null);
-                setCommentError([data, ...comments]);
+                setComments([data, ...comments]);
             }
         } catch (error) {
             setCommentError(error.message);
@@ -54,6 +55,33 @@ function CommentSection({postId}) {
         }
         getComment();
     }, [postId])
+
+    const handleLike = async(commmentId) => {
+        try {
+            if(!currentUser){
+                navigate('/sign-in');
+                return;
+            }
+            const res = await fetch(`/api/comment/likeComment/${commmentId}`, {
+                method : 'PUT',
+            });
+
+            if(res.ok){
+                const data = await res.json();
+                setComments(comments.map((comment) => 
+                    comment._id === commmentId ? {
+                        ...comment,
+                        likes: data.likes,
+                        numberOfLikes: data.likes.length,
+                    } : comment
+                ))
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    const validComments = comments.filter(comment => comment && comment._id);
 
   return (
     <div className='max-w-full mx-auto w-full p-3'>
@@ -97,11 +125,11 @@ function CommentSection({postId}) {
 
 {
     comments.length === 0 ? (
-        <p className='text-sm my-5 dark:white'>Try to add the comment please.</p>
+        <p className='text-sm my-5 dark:text-white'>Try to add the comment please.</p>
     ) : (
        <>
         <div className="text-sm my-5 flex items-center gap-1">
-            <p className='text-black dark: text-white'>
+            <p className='text-black dark:text-white'>
                 Comments
                 
             </p>
@@ -112,8 +140,9 @@ function CommentSection({postId}) {
                 </div>
         </div>
         {
-            comments.map((comment) => (
-                <Comment key={comment._id} comment = {comment}/>
+            
+            validComments.map((comment) => (
+                <Comment key={comment._id} comment={comment} onLike={handleLike}/>
             ))
         }
         
