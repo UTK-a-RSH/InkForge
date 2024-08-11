@@ -88,7 +88,8 @@ try {
       
       e.preventDefault();
       try {
-        const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
+        
+        const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
           method : 'PUT',
           headers : {
             'Content-Type' : 'application/json',
@@ -111,7 +112,7 @@ try {
         setPublishError('Something went wrong');
       }
     }
-    
+          
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
 
