@@ -66,7 +66,7 @@ function Header() {
                 <span className='block text-sm'>@{currentUser.username}</span>
                 <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                </DropdownHeader>
-               <Link to={'dashboard?tab=profile'}>
+               <Link to='/dashboard?tab=profile'>
                <DropdownItem>
                 Profile
                </DropdownItem>
@@ -76,7 +76,7 @@ function Header() {
               </Dropdown>
             ) : (
               <Link to='/sign-in'>
-              <Button className='w-15 h-10 hidden sm: inline bg-gradient-to-r from-red-500 via black to-black text-white' color='red' pill outline>Sign In</Button>
+              <Button className='w-15 h-10 hidden  sm:inline bg-gradient-to-r from-red-500 via black to-black text-white' color='red' pill outline>Sign In</Button>
               </Link>
             )} 
             <Navbar.Toggle/>

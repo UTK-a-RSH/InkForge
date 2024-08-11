@@ -1,6 +1,6 @@
 import { Sidebar, SidebarItem, SidebarItemGroup } from 'flowbite-react';
 import React from 'react';
-import { HiArrowRight, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { HiArrowRight, HiDocumentText, HiOutlineUserGroup, HiUser, HiAnnotation } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { signOutSuccess } from '../redux/user/userSlice';
@@ -41,7 +41,7 @@ function DashSidebar() {
     <Sidebar className='w-full md:w-56'>
       <SidebarItemGroup className='flex flex-col gap-1'>
         <Link to = '/dashboard?tab=profile'>
-        <SidebarItem active = {tab === 'profile'}  icon={HiUser} label={currentUser.isAdmin ? 'Admin' : 'User'} labelColor="dark" as='div'>
+        <SidebarItem active={tab === 'profile'}  icon={HiUser} label={currentUser.isAdmin ? 'Admin' : 'User'} labelColor="dark" as='div'>
           Profile
         </SidebarItem>
         </Link>
@@ -59,14 +59,28 @@ function DashSidebar() {
        }
        {
         currentUser.isAdmin && (
-          <Link to='/dashboard?tab=users'>
-            <SidebarItem
-            active={tab==='users'}
-            icon = {HiOutlineUserGroup}
-            as='div'>
-              Users
-           </SidebarItem>                            
-          </Link>
+          <>
+            <Link to='/dashboard?tab=users'>
+              <SidebarItem
+                active={tab === 'users'}
+                icon={HiOutlineUserGroup}
+                as='div'
+              >
+                Users
+              </SidebarItem>
+            </Link>
+          
+            <Link to='/dashboard?tab=comments'>
+              <SidebarItem
+                active={tab === 'comments'}
+                icon={HiAnnotation}
+                as='div'
+              >
+                Comments
+              </SidebarItem>
+            </Link>
+          </>
+          
         )
        }
         <SidebarItem icon={HiArrowRight} className="cursor-pointer" onClick={handleSignOut}>

@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, ModalB
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom';
+
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
