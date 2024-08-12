@@ -6,6 +6,7 @@ import DashSidebar from '../components/DashSidebar'
 import DashPosts from '../components/DashPosts'
 import DashUsers from '../components/DashUsers'
 import DashComments from '../components/DashComments'
+import DashBoard from '../components/DashBoard'
 
 
 
@@ -28,6 +29,7 @@ function Dashboard() {
 {tab === 'posts' && <DashPosts/>}
 {tab === 'users' && <DashUsers/>}
 {tab === 'comments' && <DashComments/>}
+{tab === 'dash' && <DashBoard />}
 
     </div>
   )
