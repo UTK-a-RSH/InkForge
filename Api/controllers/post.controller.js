@@ -107,3 +107,56 @@ try {
     next(error);
 }
 };
+
+
+
+export const generatesuggestions = async (req, res, next) => {
+    const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    try {
+        const { content } = req.body;
+
+        const requestBody = {
+            inputs: `${content}`,
+            parameters: {
+                max_length: 100,
+            },
+            options: {
+                wait_for_model: true,
+            },
+        };
+
+        
+
+        const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-v0.1', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            const errorResponseText = await response.text();
+            throw new Error(`API request failed with status ${response.status}: ${errorResponseText}`);
+        }
+
+        const responseData = await response.json();
+        if (!responseData || Object.keys(responseData).length === 0) {
+         res.status(404).json({ success: false, message: "No suggestions available." });
+        }
+       
+        res.status(200).json({ success: true, suggestions: responseData });
+    } catch (error) {
+        clearTimeout(timeoutId);
+        res.status(500).json({ success: false, statusCode: 500, message: error.message });
+    }
+};
+
+
+
+

@@ -1,12 +1,14 @@
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
-import { app } from '../firebase'
+import { app } from '../firebase';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom';
+import { GiArtificialIntelligence } from "react-icons/gi";
+
 
 function CreatePost() {
   const [file, setFile] = useState(null);
@@ -14,6 +16,7 @@ function CreatePost() {
   const [uploadError, setUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const [generatedText, setGeneratedText] = useState('');
   const navigate = useNavigate();
   
   const handleUploadImage = async() => {
@@ -85,6 +88,38 @@ function CreatePost() {
         setPublishError('Something went wrong');
       }
     }
+
+    const handleSuggestions = async() => {
+      try {
+        const res = await fetch('/api/post/generatesuggestions', {
+          method : 'POST',
+          headers : {
+            'Content-Type' : 'application/json',
+          },
+          body: JSON.stringify({
+            content : formData.content,
+          }),
+        });
+        const data = await res.json();
+        if(!res.ok){
+          setPublishError(data.message)
+          return;
+        }
+       
+        if (res.ok && data.suggestions && data.suggestions.length > 0) {
+          setGeneratedText(data.suggestions[0].generated_text.replace(/<\/?[^>]+(>|$)/g, ""));
+          console.log(data.suggestions[0].generated_text);
+          setPublishError(null);
+        } 
+        
+      } catch (error) {
+        setPublishError('Something went wrong');
+      }
+    };
+
+
+    
+   
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
 
@@ -136,11 +171,18 @@ function CreatePost() {
           <img src={formData.image} alt="upload" className='w-full h-72 object-cover' />
         )}
 
-        <ReactQuill required theme='snow' placeholder='Write your post here...' className='h-96 w-full'  onChange={(value) => {setFormData({...formData, content : value})}}/>
+        <ReactQuill required theme='snow' placeholder='Write your post here...' className='h-96 w-full' onChange={(value) => {setFormData({...formData, content : value})}}/>
         <Button type='submit' className=' text-white bg-gradient-to-r from-orange-600 to-black hover:bg-gradient-to-l w-full' outline>Publish Post</Button>
         {publishError && <Alert className='mt-5' color='failure'>{publishError}</Alert>}
 
         </form>
+        <Button className='text-white italic bg-gradient-to-r from-green-600 to-black hover:bg-gradient-to-l w-full mt-5' outline onClick={handleSuggestions}> <GiArtificialIntelligence className='size-6 mr-3'/>   INKY.ai</Button>
+        <div className='my-4'>
+       <label htmlFor='response' className='block text-sm font-medium text-black dark:text-white '>INKY's SUGGESTIONS</label>
+        <textarea readOnly value={generatedText} id='response' name='response' rows='6' className='mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-bold' placeholder='INKY Suggest that'>
+          </textarea>
+        
+    </div>
     </div>
   )
 }
