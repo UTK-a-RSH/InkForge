@@ -3,13 +3,21 @@ import { SiReplit } from "react-icons/si";
 import { BsTwitter, BsGithub, BsDribbble } from 'react-icons/bs';
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+
+const footerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 
 function FooterComp() {
   return (
-    <Footer container className='border border-t-8 border-red-600'>
+    <Footer container className='border border-t-8 border-red-600 w-full'>
       <div className='w-full max-w-7xl mx-auto'>
         <div className='grid w-full justify-between sm:flex md:grid-cols-1'>
-          <div className='mt-5'>
+          <div className='mt-5 mr-4'>
           <Link to="/" className='self-center whitespace-nowrap text-lg sm:text-x1 font-semibold dark:text-white'>
         <span className='px-2 py-2 bg-gradient-to-r from-red-700 via-black to-black rounded-xl text-white'>INK</span>Forge
     </Link>
