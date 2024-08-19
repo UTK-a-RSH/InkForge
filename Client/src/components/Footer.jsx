@@ -3,13 +3,8 @@ import { SiReplit } from "react-icons/si";
 import { BsTwitter, BsGithub, BsDribbble } from 'react-icons/bs';
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
 
-const footerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
 
 
 function FooterComp() {
