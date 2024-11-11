@@ -7,6 +7,7 @@ Features
     Content Management: Organize your posts and drafts efficiently.
     Responsive Design: Access and manage your content from any device.
     Easy Deployment: Host your blog easily with built-in deployment options.
+    Integrated with Mistral's text generation model to generate suggestions for the user.
 
 Getting Started
 
